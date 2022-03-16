@@ -6,14 +6,20 @@ main_calcul:
 
 main_prodscal:
     push 3
-    push 1
-    push 2
-    push 3
-    push 1
-    push 2
-    push 3
+    push p2
+    push p1
     call prodscal
     reset
+
+p1: 
+    .word 1 
+    .word 2 
+    .word 3
+
+p2: 
+    .word 1 
+    .word 2 
+    .word 3
 
 main_racine:
     push 12
@@ -59,40 +65,36 @@ last_arg:
 
 prodscal:
     push %b
-    push 0 // p=0
-    push 0 // i=0
-    jmp p_for
 
-p_for:
-    ld [%sp],%b
-    call last_arg
+    push 0      // on place p=0
+    push 0      // on place i=0
+    jmp p_condition
+
+p_condition:
+    ld [%sp],%b     // b <- i
+    ld [%sp+6],%a   // a <- n
     cmp %b,%a
-    jge p_end
-    add 3,%sp
-    add %b,%sp
-    ld [%sp+1],%a
-    add %a,%sp
-    ld [%sp+1],%b
-    push %b
-    add 1,%sp
-    call last_arg
-    sub %a,%sp
-    sub 3,%sp
-    pop %b
-    pop %a
-    mul %b,%a
-    pop %b
-    sub %b,%sp
-    add 1,%b
-    push %b
-    ld [%sp+1],%b
-    add %b,%a
-    st %a,[%sp+1]
-    jmp p_for
+    jge p_end_for   // on saute a la fin de la boucle for si i >=n
+    ld [%sp+4],%a   // a recoit l'adresse initiale du premier tableau
+    add %b,%a       // a recoit l'adresse de la veleur en i du premier tableau
+    ld [%a],%a      // a <- v1[i]
+    push %a         // on place la valeur courante sur la pile
+    ld [%sp+6],%a   // a recoit l'adresse initiale du second tableau
+    add %b,%a       // a recoit l'adresse de la veleur en i du second tableau
+    ld [%a],%a      // a <- v2[i]
+    pop %b          // b <- v1[i]
+    mul %b,%a       // a <- v1[i]*v2[i]
+    ld [%sp+1],%b   // b <- p
+    add %a,%b       // b <- p + v1[i]*v2[i]
+    st %b,[%sp+1]   // p <- p + v1[i]*v2[i]
+    ld [%sp],%b     // b <- i
+    add 1,%b        // b <- i+1
+    st %b,[%sp]     // i <- i+1
+    jmp p_condition
 
-p_end:
-    add 1,%sp
-    pop %a
+p_end_for:
+    add 1,%sp       // on depile i
+    pop %a          // a <- p
     pop %b
     rtn
 
