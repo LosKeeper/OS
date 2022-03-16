@@ -16,8 +16,7 @@ main_prodscal:
     reset
 
 main_racine:
-    ld 3630,%b
-    push 8
+    push 100
     call racine
     reset
 
@@ -58,20 +57,27 @@ p_for:
     cmp %b,%a
     jge p_end
     add 3,%sp
-    add %a,%b
     add %b,%sp
+    add %a,%b
     ld [%sp+1],%a
-    sub %b,%sp
+    add %a,%sp
     ld [%sp+1],%b
+    push %b
+    add 1,%sp
+    call last_arg
+    sub %a,%sp
     sub 3,%sp
+    pop %b
+    pop %a
     mul %b,%a
     pop %b
+    sub %b,%sp
     add 1,%b
     push %b
-    add [%sp+1],%a
+    ld [%sp+1],%b
+    add %b,%a
     st %a,[%sp+1]
     jmp p_for
-
 
 p_end:
     add 1,%sp
@@ -93,16 +99,14 @@ racine:
 
 r_while_first_condition:
     ld [%sp+5],%a
-    pop %b
-    push %b
+    ld [%sp],%b
     mul %b,%b
     cmp %b,%a
     jgt r_while
     jmp r_while_seconde_condition
     
 r_while_seconde_condition:
-    pop %b
-    push %b
+    ld [%sp],%b
     add 1,%b
     mul %b,%b
     cmp %b,%a
@@ -110,26 +114,29 @@ r_while_seconde_condition:
     jmp r_while_end
 
 r_while:
-    pop %b
-    push %b
+    ld [%sp],%b
     mul %b,%b
+    ld [%sp+5],%a
     cmp %b,%a
-    jgt r_else
-    pop %b
-    push %b
-    st %b,[%sp+2]
-    jmp r_while_first_condition
-
-r_else:
-    pop %b
-    push %b
-    st %b,[%sp+3]
-    ld [%sp+2],%a
+    jle r_else
+    ld [%sp],%b
+    st %b,[%sp+1]
+    ld [%sp+1],%a
+    ld [%sp+2],%b
     sub %b,%a
     div 2,%a
     add %b,%a
-    pop %b
-    push %a
+    st %a,[%sp]
+    jmp r_while_first_condition
+
+r_else:
+    ld [%sp],%b
+    st %b,[%sp+2]
+    ld [%sp+1],%a
+    sub %b,%a
+    div 2,%a
+    add %b,%a
+    st %a,[%sp]
     jmp r_while_first_condition
 
 r_while_end: 
