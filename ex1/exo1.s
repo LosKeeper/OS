@@ -5,24 +5,26 @@ main_calcul:
     reset
 
 main_prodscal:
-    push 3
-    push p2
-    push p1
+    push 4
+    push vect_2
+    push vect_1
     call prodscal
     reset
 
-p1: 
+vect_1: 
     .word 1 
     .word 2 
-    .word 3
+    .word 4
+    .word 8
 
-p2: 
-    .word 1 
-    .word 2 
-    .word 3
+vect_2: 
+    .word 16
+    .word 32
+    .word 64
+    .word 128
 
 main_racine:
-    push 12
+    push 200
     call racine
     reset
 
@@ -43,26 +45,6 @@ calcul:
     pop %b
     rtn
 
-last_arg:
-    push %b
-
-    ld 9998,%b      // b <- 9998 qui correspond a 10000 qui est la valeur 
-                    // max de la pile a laquelle on a soustrait le premier 
-                    // push b et et l'argument de retour de fonction
-
-    sub %sp,%b      // b recoit le nombre total d'arguments de la 
-                    // fonction envoyée
-
-    add %b,%sp      // on descends la pile jusqu'à la derniere valeur de 
-                    // la pile
-
-    ld [%sp+1],%a   // a recoit le dernier argument de la fonction
-
-    sub %b,%sp      // on remonte la pile a la valeur de base
-
-    pop %b
-    rtn
-
 prodscal:
     push %b
 
@@ -76,11 +58,11 @@ p_condition:
     cmp %b,%a
     jge p_end_for   // on saute a la fin de la boucle for si i >=n
     ld [%sp+4],%a   // a recoit l'adresse initiale du premier tableau
-    add %b,%a       // a recoit l'adresse de la veleur en i du premier tableau
+    add %b,%a       // a recoit l'adresse de la valeur en i du premier tableau
     ld [%a],%a      // a <- v1[i]
     push %a         // on place la valeur courante sur la pile
     ld [%sp+6],%a   // a recoit l'adresse initiale du second tableau
-    add %b,%a       // a recoit l'adresse de la veleur en i du second tableau
+    add %b,%a       // a recoit l'adresse de la valeur en i du second tableau
     ld [%a],%a      // a <- v2[i]
     pop %b          // b <- v1[i]
     mul %b,%a       // a <- v1[i]*v2[i]
@@ -102,10 +84,9 @@ racine:
     push %b
 
     push 1                      // on place inf=1 sur la pile
-    ld [%sp+3],%b               // b <- n
-    push %b                     // on place sup=n sur la pile
-    ld [%sp],%a                 // a <- sup
-    sub 1,%a                    // a <- sup-inf
+    ld [%sp+3],%a               // a <- n
+    push %a                     // on place sup=n sur la pile
+    sub 1,%a                    // a <- sup-inf qui ici vaut n-1
     div 2,%a                    // a <- (sup-inf)/2
     add 1,%a                    // a <- inf+(sup-inf)/2
     push %a                     // on place r sur la pile
