@@ -26,6 +26,12 @@ void *fonction(void *arg) {
 }
 
 int main(int argc, char *argv[]) {
+
+    if (argc != 3) {
+        printf("Usage: %s <n> <p>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
     int n = atoi(argv[1]);
     int p = atoi(argv[2]);
     pthread_barrier_t bar;

@@ -44,6 +44,12 @@ void *fonction(void *arg) {
 }
 
 int main(int argc, char *argv[]) {
+
+    if (argc != 3) {
+        printf("Usage: %s <n> <p>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
     int p = atoi(argv[2]);
     int n = atoi(argv[1]);
     pthread_t *tid = calloc(n, sizeof(pthread_t));

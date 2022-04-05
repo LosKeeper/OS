@@ -5,6 +5,12 @@
 #include <stdlib.h>
 #include <stdnoreturn.h>
 
+#define TCHK(op)                                                               \
+    do {                                                                       \
+        if ((errno = (op)) > 0)                                                \
+            raler(1, #op);                                                     \
+    } while (0)
+
 #define CHK(op)                                                                \
     do {                                                                       \
         if ((op) == -1)                                                        \
