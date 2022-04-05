@@ -60,7 +60,7 @@ p_condition:
     ld [%sp+4],%a   // a recoit l'adresse initiale du premier tableau
     add %b,%a       // a recoit l'adresse de la valeur en i du premier tableau
     ld [%a],%a      // a <- v1[i]
-    push %a         // on place la valeur courante sur la pile
+    push %a         // on place v1[i] sur la pile
     ld [%sp+6],%a   // a recoit l'adresse initiale du second tableau
     add %b,%a       // a recoit l'adresse de la valeur en i du second tableau
     ld [%a],%a      // a <- v2[i]
@@ -113,7 +113,6 @@ r_while_seconde_condition:
 r_while:                            
     ld [%sp],%b                     // b <- r
     mul %b,%b                       // b <- r*r
-    ld [%sp+5],%a                   // a <- n
     cmp %b,%a
     jle r_else                      // saut dans le else si r*r <= n
                                     // sinon on continue dans la fonction
