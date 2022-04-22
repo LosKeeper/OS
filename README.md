@@ -13,3 +13,7 @@ Exercice de conversion de fonctions simples de C à assembleur en [Zorglub33](ht
 - **Exercice 1** : Exercice de création de threads indépendants réalisant des calculs séparés.
 - **Exercice 2** : Exercice d'affichage de lignes avec alternance des signes dans le terminal (en utilisant des threads avec des barrières).
 - **Exercice 3** : Exercice réalisant les diférentes tâches modélisées par un graphe dans l'ordre indiqué et en parallèle.
+
+## [TP2](https://github.com/LosKeeper/OS/blob/main/TP2/suj-tp2.pdf)
+- **Exercice 1** : Exercice utilisant des mutex avec probleme de concurrence
+- **Exercice 2** : Exercice utilisant des sémaphores
