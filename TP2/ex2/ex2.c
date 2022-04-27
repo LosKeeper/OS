@@ -65,61 +65,61 @@ void *f(void *arg) {
     switch (data->id) {
     case 11:
         task(data->id);
-        sem_post(&sem[_21]);
-        sem_post(&sem[_22]);
+        CHK(sem_post(&sem[_21]));
+        CHK(sem_post(&sem[_22]));
         break;
 
     case 12:
         task(data->id);
-        sem_post(&sem[_21]);
-        sem_post(&sem[_22]);
-        sem_post(&sem[_23]);
+        CHK(sem_post(&sem[_21]));
+        CHK(sem_post(&sem[_22]));
+        CHK(sem_post(&sem[_23]));
         break;
 
     case 13:
         task(data->id);
-        sem_post(&sem[_23]);
-        sem_post(&sem[_24]);
-        sem_post(&sem[_31]);
+        CHK(sem_post(&sem[_23]));
+        CHK(sem_post(&sem[_24]));
+        CHK(sem_post(&sem[_31]));
         break;
 
     case 21:
-        sem_wait(&sem[_21]);
-        sem_wait(&sem[_21]);
+        CHK(sem_wait(&sem[_21]));
+        CHK(sem_wait(&sem[_21]));
         task(data->id);
-        sem_post(&sem[_31]);
+        CHK(sem_post(&sem[_31]));
         break;
 
     case 22:
-        sem_wait(&sem[_22]);
-        sem_wait(&sem[_22]);
+        CHK(sem_wait(&sem[_22]));
+        CHK(sem_wait(&sem[_22]));
         task(data->id);
-        sem_post(&sem[_32]);
+        CHK(sem_post(&sem[_32]));
         break;
 
     case 23:
-        sem_wait(&sem[_23]);
-        sem_wait(&sem[_23]);
+        CHK(sem_wait(&sem[_23]));
+        CHK(sem_wait(&sem[_23]));
         task(data->id);
-        sem_post(&sem[_32]);
+        CHK(sem_post(&sem[_32]));
         break;
 
     case 24:
-        sem_wait(&sem[_24]);
+        CHK(sem_wait(&sem[_24]));
         task(data->id);
-        sem_post(&sem[_32]);
+        CHK(sem_post(&sem[_32]));
         break;
 
     case 31:
-        sem_wait(&sem[_31]);
-        sem_wait(&sem[_31]);
+        CHK(sem_wait(&sem[_31]));
+        CHK(sem_wait(&sem[_31]));
         task(data->id);
         break;
 
     case 32:
-        sem_wait(&sem[_32]);
-        sem_wait(&sem[_32]);
-        sem_wait(&sem[_32]);
+        CHK(sem_wait(&sem[_32]));
+        CHK(sem_wait(&sem[_32]));
+        CHK(sem_wait(&sem[_32]));
         task(data->id);
         break;
     }
