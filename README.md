@@ -17,3 +17,5 @@ Exercice de conversion de fonctions simples de C à assembleur en [Zorglub33](ht
 ## [TP2](https://github.com/LosKeeper/OS/blob/main/TP2/suj-tp2.pdf)
 - **Exercice 1** : Exercice utilisant des mutex avec probleme de concurrence
 - **Exercice 2** : Exercice utilisant des sémaphores
+
+## [TP3](TP3/suj-tp3.pdf)
