@@ -1,28 +1,4 @@
-#include <errno.h>
-#include <pthread.h>
-#include <semaphore.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-#define CHK(op)                                                                \
-    do {                                                                       \
-        if ((op) == -1) {                                                      \
-            raler(#op);                                                        \
-        }                                                                      \
-    } while (0)
-#define TCHK(op)                                                               \
-    do {                                                                       \
-        if ((errno = (op)) > 0) {                                              \
-            raler(#op);                                                        \
-        }                                                                      \
-    } while (0)
-
-/* Message et arrêt */
-void raler(char *msg) {
-    perror(msg);
-    exit(EXIT_FAILURE);
-}
+#include "../macro.h"
 
 /* Des constantes pour les ingrédients, peu utiles en fait */
 #define BEURRE 0
@@ -86,15 +62,69 @@ struct epicier_arg {
 
 /* Un thread cuisinier */
 void *cuisinier(void *arg) {
+    // Récupérer les arguments
     struct cuisinier_arg *carg = arg;
-    /* ... */
+    struct table *table = carg->table;
+
+    // Attendre que l'épicier ait mis les ingrédients nécessaires sur la table
+    TCHK(pthread_mutex_lock(&table->mutex));
+    while (suffisant(carg->stock, table->ings) != 1) {
+        TCHK(pthread_cond_wait(&table->cond, &table->mutex));
+        fflush(stdout);
+        printf("cuisinier: nouveaux ingrédients\n");
+    }
+
+    // Faire le gâteau
+    TCHK(pthread_mutex_unlock(&table->mutex));
+    TCHK(pthread_mutex_lock(&table->mutex));
+    CHK(sem_post(&table->sem));
+    zero(table->ings);
+    printf("cuisinier: gâteau prêt par cuisinier %ld\n", pthread_self());
+    fflush(stdout);
+    TCHK(pthread_mutex_unlock(&table->mutex));
+
     return NULL;
 }
 
 /* Un thread épicier */
 void *epicier(void *arg) {
+    // Récupérer les arguments
     struct epicier_arg *earg = arg;
-    /* ... */
+    struct table *table = earg->table;
+    printf("épicier: début\n");
+    fflush(stdout);
+
+    // Livre des ingredients au hasard
+    while (1) {
+        int i1 = rand() % NING;
+        int i2 = ((rand() % (NING - 1)) + i1 + 1) % NING;
+        int ingr[NING];
+        zero(ingr);
+        ingr[i1] = ingr[i2] = 1;
+
+        printf("épicier: livre %d %d\n", i1, i2);
+        fflush(stdout);
+        // Mettre les ingrédients sur la table
+        TCHK(pthread_mutex_lock(&table->mutex));
+        table->ings[0] = ingr[0];
+        table->ings[1] = ingr[1];
+        table->ings[2] = ingr[2];
+        table->ings[3] = ingr[3];
+        TCHK(pthread_mutex_unlock(&table->mutex));
+        TCHK(pthread_cond_broadcast(&table->cond));
+
+        printf("épicier: attendre gâteau\n");
+        fflush(stdout);
+        // Attendre que le cuisinier ait fait le gâteau
+        TCHK(pthread_mutex_lock(&table->mutex));
+        CHK(sem_wait(&table->sem));
+        printf("épicier: gâteau reçu\n");
+        fflush(stdout);
+        TCHK(pthread_mutex_unlock(&table->mutex));
+
+        sleep(1);
+    }
+
     return NULL;
 }
 

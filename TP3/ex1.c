@@ -78,7 +78,10 @@ void *thread_function(void *arg) {
 int main(int argc, char **argv) {
     // Check arguments
     if (argc != 4) {
-        raler(0, "Usage: %s <m> <n> <p>", argv[0]);
+        raler(0,
+              "Usage: %s <Number of machines> <Number of users> <Number of "
+              "jobs per users>",
+              argv[0]);
     }
 
     // Get arguments
