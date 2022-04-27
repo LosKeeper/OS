@@ -5,6 +5,7 @@ unsigned int nbMachines;
 void *job(void *arg) {
     unsigned int *t = arg;
     sleep(*t);
+    printf("Job done\n");
     return NULL;
 }
 
@@ -25,45 +26,52 @@ void *thread_function(void *arg) {
     pthread_mutex_t *mutex = targ->mutex;
     void *(*function)(void *) = targ->function;
 
-    // Get number of machines for each jobs
+    // Get number of machines for each iobs
     unsigned int *k = malloc(sizeof(unsigned int) * p);
     if (k == NULL) {
         raler(0, "malloc");
     }
-    k[0] = 1 + ((unsigned int)time(NULL) % m);
+    k[0] = 1 + ((unsigned int)pthread_self() % m);
     for (unsigned int i = 1; i < p; i++) {
         k[i] = 1 + (rand_r(&k[i - 1]) % m);
+        k[i - 1] = 1 + (k[i - 1] % m);
     }
-
     // Get time for each sleep
     unsigned int *t = malloc(sizeof(unsigned int) * p);
     if (t == NULL) {
         raler(0, "malloc");
     }
-    t[0] = 1 + ((unsigned int)time(NULL) % 3);
-    for (unsigned int i = 0; i < p; i++) {
+    t[0] = 1 + ((unsigned int)pthread_self() % 3);
+    for (unsigned int i = 1; i < p; i++) {
         t[i] = rand_r(&t[i - 1]) % 3;
+        t[i - 1] = 1 + (t[i - 1] % 3);
     }
 
     // Launch jobs
-    for (unsigned int j = 1; j <= p; j++) {
-        // Wait for k[j] machines available
+    for (unsigned int i = 0; i < p; i++) {
+        // Wait for k[i] machines available
         TCHK(pthread_mutex_lock(mutex));
-        while (nbMachines < k[j - 1]) {
-            printf("Thread %d: waiting for %d machines\n", j, k[j - 1]);
+        while (nbMachines < k[i]) {
+            printf("Job %u: is waiting for %u machines, on thread %lu\n", i,
+                   k[i], pthread_self());
             fflush(stdout);
             TCHK(pthread_cond_wait(cond, mutex));
         }
-        nbMachines -= k[j - 1];
         TCHK(pthread_mutex_unlock(mutex));
-        function(&t[j - 1]);
         TCHK(pthread_mutex_lock(mutex));
-        nbMachines += k[j - 1];
+        printf("Job %u: use %u machines available, on thread %lu\n", i, k[i],
+               pthread_self());
+        nbMachines -= k[i];
+        TCHK(pthread_mutex_unlock(mutex));
+        function(&t[i]);
+        TCHK(pthread_mutex_lock(mutex));
+        nbMachines += k[i];
         TCHK(pthread_mutex_unlock(mutex));
         TCHK(pthread_cond_broadcast(cond));
     }
 
     free(k);
+    free(t);
     return NULL;
 }
 
@@ -93,7 +101,7 @@ int main(int argc, char **argv) {
 
     // Launch threads
     for (unsigned int i = 0; i < n; i++) {
-        TCHK(pthread_create(threads + i, NULL, thread_function, &arg));
+        TCHK(pthread_create(&threads[i], NULL, thread_function, &arg));
     }
 
     // Wait for threads
