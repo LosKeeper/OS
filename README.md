@@ -8,7 +8,7 @@ Pour l'ensemble des exercices, on utilisera le fichier [`macro.h`](macro.h) qui 
 - **`TCHK(pthread_cmd)`** : execute `pthread_cmd`, positionne errno et affiche le message d'erreur si `pthread_cmd` échoue.
 ## [TP Assembleur](TP_Assembleur/suj-exo1.pdf)
 - Exercice de conversion de fonctions simples de C à assembleur en [Zorglub33](https://github.com/sandhose/z33-emulator).
-> Pour compiler le code assembleur, il faut utiliser le compilateur [`z33-cli`](TP_Assembleur/z33-cli) qui est déjà installé sur le repo.
+> Pour compiler le code assembleur, il faut utiliser le compilateur [`z33-cli`](TP_Assembleur/z33-cli) qui est déjà installé sur le repo et donc les principales commandes sont référencées [ici](https://pdagog.gitlab.io/ens/z33refcard.pdf).
 
 ## [TP1](TP1/suj-tp1.pdf)
 - [**Exercice 1**](TP1/ex1.c) : Exercice de création de threads indépendants réalisant des calculs séparés.
