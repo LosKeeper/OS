@@ -23,3 +23,8 @@ Pour l'ensemble des exercices, on utilisera le fichier [`macro.h`](macro.h) qui 
 - [**Exercice 1**](TP3/ex1.c) : Exercice d'utilisation de conditions pour synchroniser les threads simulant la gestion d'un centre de calcul.
 - [**Exercice 2**](TP3/ex2.c) : Exercice d'utilisation de conditions et sémaphores pour synchroniser les threads simulant un système avec des cuisiniers et un épicier livrant des ingrédients pour faire des gâteaux. 
     > Exercice 2 en cours de résolution
+
+## Annales
+### [TP 2020-2021](Annales/20-21/suj-cc.pdf)
+- [**Exercice**](Annales/20-21/tp21-21.c) : Système multithreads. 
+    > En cours de résolution
