@@ -26,5 +26,4 @@ Pour l'ensemble des exercices, on utilisera le fichier [`macro.h`](macro.h) qui 
 
 ## Annales
 ### [TP 2020-2021](Annales/20-21/suj-cc.pdf)
-- [**Exercice**](Annales/20-21/tp21-21.c) : Système multithreads. 
-    > En cours de résolution
+- [**Exercice**](Annales/20-21/tp21-21.c) : Système multithreads.

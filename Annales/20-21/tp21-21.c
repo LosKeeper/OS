@@ -24,10 +24,11 @@
     } while (0)
 
 struct arg {
-    char *fichier;      // fichier que le thread doit lire
-    char ligne[MAXLEN]; // chaque ligne lue par le thread
-    int *termine;       // indique si le thread est terminé
-    sem_t *sem;         // semaphore pour la manipulation du fichier
+    char *fichier;       // fichier que le thread doit lire
+    char ligne[MAXLEN];  // chaque ligne lue par le thread
+    int *termine;        // indique si le thread est terminé
+    sem_t *sem_lecture;  // sémaphore de lecture
+    sem_t *sem_ecriture; // sémaphore d'écriture
 };
 
 noreturn void raler(int syserr, const char *fmt, ...) {
@@ -55,10 +56,10 @@ void *f(void *arg) {
 
     while (fgets(ligne, sizeof ligne, fp) != NULL) {
         // recopier la ligne lue dans la variable partagée
-        sem_post(a->sem);
-        sem_wait(a->sem);
+        sem_wait(a->sem_lecture);
         strcpy(a->ligne, ligne);
-        }
+        sem_post(a->sem_ecriture);
+    }
 
     if (fclose(fp) == EOF)
         raler(1, "fclose %s", a->fichier);
@@ -73,28 +74,33 @@ int main(int argc, char *argv[]) {
     struct arg arg;
     int termine = 0;
 
-    sem_t sem;
-    sem_init(&sem, 0, 1);
+    sem_t sem_lecture;
+    sem_t sem_ecriture;
+    sem_init(&sem_lecture, 0, 1);
+    sem_init(&sem_ecriture, 0, 0);
 
     if (argc != 2)
         raler(0, "usage: %s fichier", argv[0]);
 
     arg.fichier = argv[1];
-    arg.sem = &sem;
+    arg.sem_lecture = &sem_lecture;
+    arg.sem_ecriture = &sem_ecriture;
+
     arg.termine = &termine;
 
     TCHK(pthread_create(&id, NULL, f, &arg));
 
     while (!termine) {
-        sem_wait(&sem);
+        sem_wait(&sem_ecriture);
         printf("%s", arg.ligne);
         fflush(stdout);
-        sem_post(&sem);
+        sem_post(&sem_lecture);
     }
 
     TCHK(pthread_join(id, NULL));
 
-    sem_destroy(&sem);
+    sem_destroy(&sem_lecture);
+    sem_destroy(&sem_ecriture);
 
     exit(0);
 }
