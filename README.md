@@ -26,7 +26,7 @@ Pour l'ensemble des exercices, on utilisera le fichier [`macro.h`](macro.h) qui 
 
 ## Annales
 ### [TP 2020-2021](Annales/20-21/suj-cc.pdf)
-- [**Exercice**](Annales/20-21/tp21-21.c) : Système multithreads.
+- [**Exercice**](Annales/20-21/correction.c) : Système multithreads.
 
 ### [TP 2019-2020](Annales/19-20/suj-cc.pdf)
 - [**Exercice**](Annales/19-20/tp19-20.c) : Système producteur consommateur à tampon borné.
