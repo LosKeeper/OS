@@ -44,4 +44,6 @@ clean:
 	rm -f tags core moodle.tgz
 	rm -rf moodle
 	rm -f devoir.tgz
+	rm -f /dev/shm/sem.PROD*  # semaphores
+
 

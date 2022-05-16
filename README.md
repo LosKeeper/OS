@@ -30,3 +30,10 @@ Pour l'ensemble des exercices, on utilisera le fichier [`macro.h`](macro.h) qui 
 
 ### [TP 2019-2020](Annales/19-20/suj-cc.pdf)
 - [**Exercice**](Annales/19-20/tp19-20.c) : Système producteur consommateur à tampon borné.
+
+
+## TP Noté
+- [**Exercice**](TP_Noté/tp_note.c) de concurence et interblocages simulant des ourses avec différents livreurs.
+
+## [TP à rendre 2](TP_A_Rendre_2/suj-exo2.pdf)
+- Exercice de simulation de vendeurs et clients avec des sémaphores partagées et étalage dans de fichiers correspondant au produit.
