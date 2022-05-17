@@ -2,7 +2,7 @@
 
 int main(int argc, char *argv[]) {
     // Check arguments
-    if (argc % 2 != 1 && argc < 3) {
+    if (argc % 2 != 1 || argc < 3) {
         raler(0,
               "Usage: %s <produit_1> <quantite_1> <produit_2> <quantite_2> ...",
               argv[0]);
@@ -11,9 +11,7 @@ int main(int argc, char *argv[]) {
     // Get arguments
     struct client_args *arguments =
         chk_malloc(sizeof(struct client_args) * ((argc - 1) / 2));
-    arguments[0].produit = argv[1];
-    arguments[0].quantite = atoi(argv[2]);
-    for (int i = 1; i < (argc - 1) / 2; i++) {
+    for (int i = 0; i < (argc - 1) / 2; i++) {
         arguments[i].produit = argv[2 * i + 1];
         arguments[i].quantite = atoi(argv[2 * i + 2]);
         if (arguments[i].quantite <= 0) {
@@ -44,30 +42,26 @@ int main(int argc, char *argv[]) {
 
     // Read the product file
     int fd;
-    CHK(fd = open(arguments[0].produit, O_RDONLY));
+    CHK(fd = open(arguments[0].produit, O_RDWR));
 
     // Check if the file is empty
-    int q;
     if (lseek(fd, 0, SEEK_END) == 0) {
         // The file is empty
         raler(0, "Product file %s is empty\n", arguments[0].produit);
     } else {
-        // The file is not empty
-        // Read the file
-        CHK(read(fd, &q, sizeof(q)));
-
-        // Update the file
-        q += arguments[0].quantite;
+        // Move the file pointer to the beginning of the file
         CHK(lseek(fd, 0, SEEK_SET));
-        CHK(write(fd, &q, sizeof(q)));
     }
 
+    // Read the file
+    struct product_file_s product_file_read;
+    CHK(read(fd, &product_file_read, sizeof(product_file_read)));
+    printf("%s: %d\n", arguments[0].produit, product_file_read.quantite);
+    product_file_read.quantite -= arguments[0].quantite;
+    printf("%s: %d\n", arguments[0].produit, product_file_read.quantite);
     // Update the file
-    for (int i = 1; i < (argc - 1) / 2; i++) {
-        q -= arguments[i].quantite;
-    }
     CHK(lseek(fd, 0, SEEK_SET));
-    CHK(write(fd, &q, sizeof(q)));
+    CHK(write(fd, &product_file_read, sizeof(product_file_read)));
 
     // The file is now available
     TCHK(sem_post(sem_file));

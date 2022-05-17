@@ -13,6 +13,8 @@ int main(int argc, char *argv[]) {
     if (quantite < 0) {
         raler(0, "Usage: %s <produit> <quantite>", argv[0]);
     }
+    struct product_file_s product_file;
+    product_file.quantite = quantite;
 
     // Create named semaphore for the file or use existing one
     sem_t *sem_file;
@@ -39,6 +41,19 @@ int main(int argc, char *argv[]) {
     // Check if the "vendeur" want to close
     if (quantite == 0) {
         // The "vendeur" want to close
+
+        // Check if the product file exists
+        if (lseek(fd, 0, SEEK_END) <= 0) {
+            // The product file is empty
+            // Remove file
+            CHK(close(fd));
+            CHK(unlink(produit));
+            raler(0, "Product file %s is empty\n", produit);
+        } else {
+            // Move the file pointer to the beginning of the file
+            CHK(lseek(fd, 0, SEEK_SET));
+        }
+
         // Warn the "client" that the "vendeur" want to close
         TCHK(sem_post(sem_client));
 
@@ -55,18 +70,24 @@ int main(int argc, char *argv[]) {
         exit(EXIT_SUCCESS);
     }
 
+    // Move the file pointer to the beginning of the file
+    CHK(lseek(fd, 0, SEEK_SET));
+
     // Write "quantite" to the file if file is empty
-    if (lseek(fd, 0, SEEK_END) == 0) {
-        CHK(write(fd, &quantite, sizeof(int)));
+    if (lseek(fd, 0, SEEK_END) <= 0) {
+        CHK(write(fd, &product_file, sizeof(product_file)));
     } else {
+        // Move the file pointer to the beginning of the file
+        CHK(lseek(fd, 0, SEEK_SET));
+
         // Read the file
-        int q;
-        CHK(read(fd, &q, sizeof(q)));
+        struct product_file_s product_file_read;
+        CHK(read(fd, &product_file_read, sizeof(product_file_read)));
 
         // Update the file
-        q += quantite;
+        product_file_read.quantite += quantite;
         CHK(lseek(fd, 0, SEEK_SET));
-        CHK(write(fd, &q, sizeof(q)));
+        CHK(write(fd, &product_file_read, sizeof(product_file_read)));
     }
 
     // The file is now available

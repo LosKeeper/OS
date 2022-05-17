@@ -29,8 +29,18 @@
             raler(1, #op);                                                     \
     } while (0)
 
+/**
+ * @brief Structure for the arguments of the client
+ */
 struct client_args {
     char *produit;
+    int quantite;
+};
+
+/**
+ * @brief Structure for the content of the product file
+ */
+struct product_file_s {
     int quantite;
 };
 
