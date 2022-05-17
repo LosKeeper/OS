@@ -29,8 +29,8 @@ int main(int argc, char *argv[]) {
         sem_file = chk_sem_open(arguments[i].produit, 0, 1);
 
         // Create named semaphore for the "vendeur" or use existing one
-        // sem_t *sem_vendeur;
-        // sem_vendeur = chk_sem_open(arguments[i].produit, 1, 1);
+        sem_t *sem_vendeur;
+        sem_vendeur = chk_sem_open(arguments[i].produit, 1, 0);
 
         // Create named semaphore for the "client" or use existing one
         // sem_t *sem_client;
@@ -59,19 +59,37 @@ int main(int argc, char *argv[]) {
         struct product_file_s product_file_read;
         CHK(read(fd, &product_file_read, sizeof(product_file_read)));
 
-        // Check if product quantity is enough
-        while (product_file_read.quantite < arguments[i].quantite) {
-            // Wait for the "vendeur" to add the product
-            printf("Waiting for the product %s to be added\n",
-                   arguments[i].produit);
-            TCHK(sem_wait(sem_file));
-        }
-
-        // Update the file
-        product_file_read.quantite -= arguments[i].quantite;
+        // Update waiting clients number for the product
+        product_file_read.nb_clients++;
         CHK(lseek(fd, 0, SEEK_SET));
         CHK(write(fd, &product_file_read, sizeof(product_file_read)));
-        printf("Product %s sold\n", arguments[i].produit);
+        DEBUG_PRINT("%d clients (this client) waiting for %s\n",
+                    product_file_read.nb_clients, arguments[i].produit);
+
+        // Check if product quantity is enough
+        while (product_file_read.quantite < arguments[i].quantite) {
+            // Close the file to wait for the "vendeur" to update it
+            CHK(close(fd));
+            CHK(sem_post(sem_file));
+
+            // Wait for the "vendeur" to add the product
+            DEBUG_PRINT("Waiting for the \"vendeur\" to add the product\n");
+            TCHK(sem_wait(sem_vendeur));
+
+            // Read the file
+            CHK(sem_wait(sem_file));
+            CHK(fd = open(arguments[i].produit, O_RDWR));
+            CHK(lseek(fd, 0, SEEK_SET));
+            CHK(read(fd, &product_file_read, sizeof(product_file_read)));
+        }
+
+        // Update quantity of the product and waiting clients number
+        CHK(lseek(fd, 0, SEEK_SET));
+        CHK(read(fd, &product_file_read, sizeof(product_file_read)));
+        product_file_read.quantite -= arguments[i].quantite;
+        product_file_read.nb_clients--;
+        CHK(lseek(fd, 0, SEEK_SET));
+        CHK(write(fd, &product_file_read, sizeof(product_file_read)));
 
         // The file is now available
         TCHK(sem_post(sem_file));
@@ -82,7 +100,7 @@ int main(int argc, char *argv[]) {
         // Close file and semaphores
         CHK(close(fd));
         CHK(sem_close(sem_file));
-        // CHK(sem_close(sem_vendeur));
+        CHK(sem_close(sem_vendeur));
         // CHK(sem_close(sem_client));
     }
 
