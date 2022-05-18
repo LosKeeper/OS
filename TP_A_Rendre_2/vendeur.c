@@ -25,14 +25,10 @@ int main(int argc, char *argv[]) {
     sem_t *sem_vendeur;
     sem_vendeur = chk_sem_open(produit, 1, 0);
 
-    // Create named semaphore for the "client" or use existing one
-    // sem_t *sem_client;
-    // sem_client = chk_sem_open(produit, 2, 0);
-
     // Wait for the file to be available
     TCHK(sem_wait(sem_file));
 
-    // Create file named "produit" in the current directory or truncate it
+    // Create file named "produit" in the current directory or open it
     int fd;
     CHK(fd = open(produit, O_RDWR | O_CREAT, 0666));
 
@@ -49,10 +45,8 @@ int main(int argc, char *argv[]) {
             CHK(unlink(produit));
             CHK(sem_unlink(sem_name(produit, 0)));
             raler(0, "Product file %s is empty\n", produit);
-        } else {
-            // Move the file pointer to the beginning of the file
-            CHK(lseek(fd, 0, SEEK_SET));
         }
+
         // Move the file pointer to the beginning of the file
         CHK(lseek(fd, 0, SEEK_SET));
 
@@ -66,17 +60,16 @@ int main(int argc, char *argv[]) {
         CHK(sem_unlink(sem_name(produit, 0)));
         DEBUG_PRINT("Product file %s closed\n", produit);
 
-        // Warn the "client" that the"vendeur" is closed
+        // Warn the "client" that the "vendeur" is closed
         for (int i = 0; i < product_file.nb_clients; i++) {
             TCHK(sem_post(sem_vendeur));
         }
         DEBUG_PRINT("%d clients notified\n", product_file.nb_clients);
 
-        // Exit
         exit(EXIT_SUCCESS);
     }
 
-    // Write "quantite" to the file if file is empty
+    // Write quantity to the file if file is empty
     int n;
     if ((n = lseek(fd, 0, SEEK_END)) == 0) {
         // Move the file pointer to the beginning of the file
@@ -113,8 +106,6 @@ int main(int argc, char *argv[]) {
     CHK(close(fd));
     CHK(sem_close(sem_file));
     CHK(sem_close(sem_vendeur));
-    // CHK(sem_close(sem_client));
 
-    // Exit
     exit(EXIT_SUCCESS);
 }

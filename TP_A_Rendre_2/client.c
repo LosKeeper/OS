@@ -32,17 +32,10 @@ int main(int argc, char *argv[]) {
         sem_t *sem_vendeur;
         sem_vendeur = chk_sem_open(arguments[i].produit, 1, 0);
 
-        // Create named semaphore for the "client" or use existing one
-        // sem_t *sem_client;
-        // sem_client = chk_sem_open(arguments[i].produit, 2, 0);
-
         // Wait for the file to be available
         TCHK(sem_wait(sem_file));
 
-        // Wait for the "vendeur" to warn that the file is available
-        // TCHK(sem_wait(sem_client));
-
-        // Read the product file
+        // Open the product file
         int fd;
         CHK(fd = open(arguments[i].produit, O_RDWR));
 
@@ -66,18 +59,26 @@ int main(int argc, char *argv[]) {
         DEBUG_PRINT("%d clients (this client) waiting for %s\n",
                     product_file_read.nb_clients, arguments[i].produit);
 
-        // Check if product quantity is enough
+        // While product quantity is not enough
         while (product_file_read.quantite < arguments[i].quantite) {
             // Close the file to wait for the "vendeur" to update it
             CHK(close(fd));
             CHK(sem_post(sem_file));
 
-            // Wait for the "vendeur" to add the product
-            DEBUG_PRINT("Waiting for the \"vendeur\" to add the product\n");
+            // Wait for the "vendeur" to add product
+            DEBUG_PRINT("Waiting for the \"vendeur\" to add product\n");
             TCHK(sem_wait(sem_vendeur));
 
-            // Read the file and exit if file does not exist
-            CHK(fd = open(arguments[i].produit, O_RDWR));
+            // Reopen and the file and exit if file does not exist ie if the
+            // "vendeur" close
+            if ((fd = open(arguments[i].produit, O_RDWR)) == -1) {
+                CHK(sem_close(sem_file));
+                CHK(sem_close(sem_vendeur));
+                CHK(sem_unlink(sem_name(arguments[i].produit, 1)));
+                CHK(sem_unlink(sem_name(arguments[i].produit, 0)));
+                raler(1, "Product file %s does not exist\n",
+                      arguments[i].produit);
+            }
             CHK(sem_wait(sem_file));
             CHK(lseek(fd, 0, SEEK_SET));
             CHK(read(fd, &product_file_read, sizeof(product_file_read)));
@@ -94,16 +95,11 @@ int main(int argc, char *argv[]) {
         // The file is now available
         TCHK(sem_post(sem_file));
 
-        // Warn the "vendeur" that the file is available
-        // TCHK(sem_post(sem_vendeur));
-
         // Close file and semaphores
         CHK(close(fd));
         CHK(sem_close(sem_file));
         CHK(sem_close(sem_vendeur));
-        // CHK(sem_close(sem_client));
     }
 
-    // Exit
     exit(EXIT_SUCCESS);
 }

@@ -30,9 +30,6 @@ char *sem_name(char *name, short type) {
     case 1:
         sprintf(sem_name, "%s.vendeur", name);
         break;
-    case 2:
-        sprintf(sem_name, "%s.client", name);
-        break;
     default:
         raler(0, "sem_name: type %d unknow", type);
     }
