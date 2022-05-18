@@ -53,21 +53,24 @@ int main(int argc, char *argv[]) {
             // Move the file pointer to the beginning of the file
             CHK(lseek(fd, 0, SEEK_SET));
         }
+        // Move the file pointer to the beginning of the file
+        CHK(lseek(fd, 0, SEEK_SET));
 
-        // Warn the "client" that the "vendeur" want to close
-        // TCHK(sem_post(sem_client));
-
-        // Wait for the "client" acknowledge
-        // TCHK(sem_wait(sem_vendeur));
+        // Read the file
+        CHK(read(fd, &product_file, sizeof(product_file)));
 
         // Close the file and semaphores
         CHK(close(fd));
         CHK(sem_close(sem_file));
         CHK(unlink(produit));
         CHK(sem_unlink(sem_name(produit, 0)));
-        raler(0, "Product file %s is close\n", produit);
-        // TCHK(sem_close(sem_vendeur));
-        // TCHK(sem_close(sem_client));
+        DEBUG_PRINT("Product file %s closed\n", produit);
+
+        // Warn the "client" that the"vendeur" is closed
+        for (int i = 0; i < product_file.nb_clients; i++) {
+            TCHK(sem_post(sem_vendeur));
+        }
+        DEBUG_PRINT("%d clients notified\n", product_file.nb_clients);
 
         // Exit
         exit(EXIT_SUCCESS);

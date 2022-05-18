@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
             DEBUG_PRINT("Waiting for the \"vendeur\" to add the product\n");
             TCHK(sem_wait(sem_vendeur));
 
-            // Read the file
+            // Read the file and exit if file does not exist
             CHK(fd = open(arguments[i].produit, O_RDWR));
             CHK(sem_wait(sem_file));
             CHK(lseek(fd, 0, SEEK_SET));

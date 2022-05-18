@@ -218,7 +218,7 @@ wait $PID3                            || fail "erreur client 3, cf $TMP.cerr3"
 # stock = <0, 1, 0>, attente = <c2>
 
 # réapprovisionner en PROD3
-./vendeur PROD3 5 > $TMP.verr4        || fail "erreur vendeur 4 PROD3 5"
+./vendeur PROD3 5 2> $TMP.verr4       || fail "erreur vendeur 4 PROD3 5"
 # stock = <0, 1, 5>, attente = <c2>
 # laisser le temps au client 2 de se réveiller
 msleep 100
