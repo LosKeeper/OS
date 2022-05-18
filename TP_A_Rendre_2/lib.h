@@ -33,7 +33,7 @@
 #define BOLDWHITE "\033[1m\033[37m"   /* Bold White */
 
 #define SEM_NAME_EXT_LEN \
-    9 // "sem.PROD.file" or "sem.PROD.vendeur" or "sem.PROD.client"
+    20 // "sem.PROD.file" or "sem.PROD.vendeur" or "sem.PROD.client"
 
 #define TCHK(op)                \
     do {                        \
@@ -47,7 +47,7 @@
             raler(1, #op); \
     } while (0)
 
-#define DEBUG 1
+// #define DEBUG 1
 
 // Print debug in green
 #if DEBUG

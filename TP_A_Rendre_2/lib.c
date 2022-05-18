@@ -22,7 +22,7 @@ void *chk_malloc(size_t size) {
 }
 
 char *sem_name(char *name, short type) {
-    char *sem_name = chk_malloc(strlen(name) + SEM_NAME_EXT_LEN);
+    char *sem_name = chk_malloc(sizeof(char) * SEM_NAME_EXT_LEN);
     switch (type) {
     case 0:
         sprintf(sem_name, "%s.file", name);
