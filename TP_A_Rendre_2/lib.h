@@ -32,30 +32,30 @@
 #define BOLDCYAN "\033[1m\033[36m"    /* Bold Cyan */
 #define BOLDWHITE "\033[1m\033[37m"   /* Bold White */
 
-#define SEM_NAME_EXT_LEN                                                       \
+#define SEM_NAME_EXT_LEN \
     9 // "sem.PROD.file" or "sem.PROD.vendeur" or "sem.PROD.client"
 
-#define TCHK(op)                                                               \
-    do {                                                                       \
-        if ((errno = (op)) > 0)                                                \
-            raler(1, #op);                                                     \
+#define TCHK(op)                \
+    do {                        \
+        if ((errno = (op)) > 0) \
+            raler(1, #op);      \
     } while (0)
 
-#define CHK(op)                                                                \
-    do {                                                                       \
-        if ((op) == -1)                                                        \
-            raler(1, #op);                                                     \
+#define CHK(op)            \
+    do {                   \
+        if ((op) == -1)    \
+            raler(1, #op); \
     } while (0)
 
 #define DEBUG 1
 
 // Print debug in green
 #if DEBUG
-#define DEBUG_PRINT(...)                                                       \
-    do {                                                                       \
-        fprintf(stderr, GREEN);                                                \
-        fprintf(stderr, __VA_ARGS__);                                          \
-        fprintf(stderr, RESET);                                                \
+#define DEBUG_PRINT(...)              \
+    do {                              \
+        fprintf(stderr, GREEN);       \
+        fprintf(stderr, __VA_ARGS__); \
+        fprintf(stderr, RESET);       \
     } while (0)
 #else
 #define DEBUG_PRINT(...)

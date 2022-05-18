@@ -77,8 +77,8 @@ int main(int argc, char *argv[]) {
             TCHK(sem_wait(sem_vendeur));
 
             // Read the file
-            CHK(sem_wait(sem_file));
             CHK(fd = open(arguments[i].produit, O_RDWR));
+            CHK(sem_wait(sem_file));
             CHK(lseek(fd, 0, SEEK_SET));
             CHK(read(fd, &product_file_read, sizeof(product_file_read)));
         }
