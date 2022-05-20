@@ -21,6 +21,7 @@ int main(int argc, char *argv[]) {
                   argv[0]);
         }
     }
+    // n is the number of couples (produit, quantite)
     int n = (argc - 1) / 2;
     for (int i = 0; i < n; i++) {
 
@@ -79,7 +80,7 @@ int main(int argc, char *argv[]) {
                 raler(1, "Product file %s does not exist\n",
                       arguments[i].produit);
             }
-            CHK(sem_wait(sem_file));
+            TCHK(sem_wait(sem_file));
             CHK(lseek(fd, 0, SEEK_SET));
             CHK(read(fd, &product_file_read, sizeof(product_file_read)));
         }
