@@ -27,8 +27,6 @@ Pour l'ensemble des exercices, on utilisera le fichier [`macro.h`](macro.h) qui 
 - [**Exercice 1**](TP4/ex1.c) : Exercice d'utilisation de mémoire partagée simple.
 - **Exercices 2-3-4** : Exercices d'utilisation de mémoire partagée entre plusieurs programmes.
 
-## [TP Noté 2](TP_A_Rendre_2/suj-exo2.pdf)
-- Exercice utilisant des sémaphores nommées entre plusieurs programmes.
 
 ## Annales
 ### [TP 2020-2021](Annales/20-21/suj-cc.pdf)
@@ -41,5 +39,5 @@ Pour l'ensemble des exercices, on utilisera le fichier [`macro.h`](macro.h) qui 
 ## TP Noté
 - [**Exercice**](TP_Noté/tp_note.c) de concurrence et interblocages simulant des ourses avec différents livreurs.
 
-## [TP à rendre 2](TP_A_Rendre_2/suj-exo2.pdf)
-- Exercice de simulation de vendeurs et clients avec des sémaphores partagées et étalage dans de fichiers correspondant au produit.
+## [TP Noté 2](TP_A_Rendre_2/suj-exo2.pdf)
+- Exercice de simulation de vendeurs et clients avec des sémaphores partagées.
